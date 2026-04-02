@@ -70,6 +70,7 @@
             <Button Name="btnSolve" Content="Solve Puzzle" Click="btnSolve_Click" Width="120" Height="40" Margin="10" Background="#2ECC71" Foreground="White" FontWeight="Bold"/>
             <Button Name="btnClear" Content="Clear Board" Click="btnClear_Click" Width="120" Height="40" Margin="10" Background="#E74C3C" Foreground="White" FontWeight="Bold"/>
             <Button Name="btnGenerate" Content="Generate New" Click="btnGenerate_Click" Width="120" Height="40" Margin="10" Background="#3498DB" Foreground="White" FontWeight="Bold"/>
+            <Button Name="btnCheck" Content="Check" Click="btnCheck_Click" Width="100" Height="40" Margin="10" Background="#F39C12" Foreground="White" FontWeight="Bold"/>
         </StackPanel>
 
         <MediaElement Name="bgMusic" LoadedBehavior="Manual" UnloadedBehavior="Stop" Volume="0.5" Visibility="Collapsed" MediaFailed="bgMusic_MediaFailed"/>

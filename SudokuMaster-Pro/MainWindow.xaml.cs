@@ -354,5 +354,31 @@ namespace SudokuMaster_Pro
             _musicEnabled = false;
             // لا نعرض رسالة للمستخدم حتى لا يزعجه
         }
+        private void btnCheck_Click(object sender, RoutedEventArgs e)
+        {
+            int[,] board = new int[9, 9];
+            for (int r = 0; r < 9; r++)
+                for (int c = 0; c < 9; c++)
+                {
+                    string txt = _cellTextBoxes[r, c].Text;
+                    board[r, c] = string.IsNullOrEmpty(txt) ? 0 : int.Parse(txt);
+                }
+            if (IsBoardValid(board))
+            {
+                // بالإضافة: هل اللوحة كاملة ومطابقة للحل؟ يمكننا التحقق من وجود خلايا فارغة
+                bool isComplete = true;
+                for (int r = 0; r < 9; r++)
+                    for (int c = 0; c < 9; c++)
+                        if (board[r, c] == 0) { isComplete = false; break; }
+                if (isComplete)
+                    MessageBox.Show("Congratulations! The board is full and valid.", "Check", MessageBoxButton.OK, MessageBoxImage.Information);
+                else
+                    MessageBox.Show("The board has no duplicates so far. Keep going!", "Check", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+            else
+            {
+                MessageBox.Show("Invalid board: duplicate numbers exist.", "Check", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
+        }
     }
 }
