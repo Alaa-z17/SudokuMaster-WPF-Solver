@@ -45,9 +45,6 @@ TestResults/
 *.coveragexml
 *.dotCover
 
-# Publish outputs
-Publish/
-published/
 
 # Database files
 *.mdf
