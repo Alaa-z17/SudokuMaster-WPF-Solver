@@ -86,18 +86,20 @@
         //  difficulty level represents the number of cells to clear
         public int[,] GeneratePuzzle(int difficulty)
         {
-            int[,] board = new int[Size, Size];
-
-            // 1. Fill the diagonal 3x3 boxes (independent, no clash possible)
-            FillDiagonal(board);
-
-            // 2. Solve the board to have a complete valid grid
-            Solve(board);
-
-            // 3. Remove digits to create the puzzle
-            RemoveKDigits(board, difficulty);
-
-            return board;
+            int[,] fullBoard = new int[Size, Size];
+            FillDiagonal(fullBoard);
+            Solve(fullBoard);  // الآن fullBoard مكتمل
+            int[,] puzzle = (int[,])fullBoard.Clone();
+            RemoveKDigits(puzzle, difficulty);
+            // إذا تعددت الحلول، نعيد المحاولة (بسيطة لكنها فعالة)
+            int attempts = 0;
+            while (CountSolutions(puzzle) != 1 && attempts < 10)
+            {
+                puzzle = (int[,])fullBoard.Clone();
+                RemoveKDigits(puzzle, difficulty);
+                attempts++;
+            }
+            return puzzle;
         }
 
         private void FillDiagonal(int[,] board)
@@ -149,6 +151,45 @@
                 {
                     board[r, c] = 0;
                     removed++;
+                }
+            }
+        }
+        private int CountSolutions(int[,] board, int limit = 2)
+        {
+            int[,] copy = (int[,])board.Clone();
+            int[] rowMask = new int[Size];
+            int[] colMask = new int[Size];
+            int[,] gridMask = new int[3, 3];
+            InitializeMasks(copy, rowMask, colMask, gridMask);
+            int solutions = 0;
+            CountSolutionsBacktrack(copy, 0, 0, rowMask, colMask, gridMask, ref solutions, limit);
+            return solutions;
+        }
+
+        private void CountSolutionsBacktrack(int[,] board, int row, int col, int[] rowMask, int[] colMask, int[,] gridMask, ref int solutions, int limit)
+        {
+            if (solutions >= limit) return;
+            if (col == Size) { row++; col = 0; }
+            if (row == Size) { solutions++; return; }
+            if (board[row, col] != 0)
+            {
+                CountSolutionsBacktrack(board, row, col + 1, rowMask, colMask, gridMask, ref solutions, limit);
+                return;
+            }
+            for (int num = 1; num <= 9; num++)
+            {
+                int mask = 1 << num;
+                if ((rowMask[row] & mask) == 0 && (colMask[col] & mask) == 0 && (gridMask[row / 3, col / 3] & mask) == 0)
+                {
+                    board[row, col] = num;
+                    rowMask[row] |= mask;
+                    colMask[col] |= mask;
+                    gridMask[row / 3, col / 3] |= mask;
+                    CountSolutionsBacktrack(board, row, col + 1, rowMask, colMask, gridMask, ref solutions, limit);
+                    board[row, col] = 0;
+                    rowMask[row] &= ~mask;
+                    colMask[col] &= ~mask;
+                    gridMask[row / 3, col / 3] &= ~mask;
                 }
             }
         }
