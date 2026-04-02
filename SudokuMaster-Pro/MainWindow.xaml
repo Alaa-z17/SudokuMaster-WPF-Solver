@@ -72,6 +72,6 @@
             <Button Name="btnGenerate" Content="Generate New" Click="btnGenerate_Click" Width="120" Height="40" Margin="10" Background="#3498DB" Foreground="White" FontWeight="Bold"/>
         </StackPanel>
 
-        <MediaElement Name="bgMusic" Source="Assets/background_music.mp3" LoadedBehavior="Play" UnloadedBehavior="Stop" Volume="0.5" Visibility="Collapsed" MediaEnded="bgMusic_MediaEnded"/>
+        <MediaElement Name="bgMusic" LoadedBehavior="Manual" UnloadedBehavior="Stop" Volume="0.5" Visibility="Collapsed" MediaFailed="bgMusic_MediaFailed"/>
     </Grid>
 </Window>

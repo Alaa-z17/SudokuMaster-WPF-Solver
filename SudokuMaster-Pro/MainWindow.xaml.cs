@@ -22,6 +22,8 @@ namespace SudokuMaster_Pro
 
         private int _bestScore;
 
+        bool _musicEnabled = false;
+
         //  Initialize Timer in Constructor
         private void InitTimer()
         {
@@ -70,6 +72,16 @@ namespace SudokuMaster_Pro
                 TimeSpan time = TimeSpan.FromSeconds(_bestScore);
                 txtBestScore.Text = "Best: " + time.ToString(@"mm\:ss");
             }
+
+            try
+            {
+                bgMusic.Source = new Uri("Assets/background_music.mp3", UriKind.Relative);
+                bgMusic.LoadedBehavior = MediaState.Play;
+                bgMusic.MediaEnded += bgMusic_MediaEnded;
+                _musicEnabled = true;
+            }
+            catch { /* music not available */ }
+
 
             InitTimer();           // Added this line
             GenerateSudokuGrid();
@@ -336,6 +348,11 @@ namespace SudokuMaster_Pro
         {
             bgMusic.Position = TimeSpan.Zero;
             bgMusic.Play();
+        }
+        private void bgMusic_MediaFailed(object sender, ExceptionRoutedEventArgs e)
+        {
+            _musicEnabled = false;
+            // لا نعرض رسالة للمستخدم حتى لا يزعجه
         }
     }
 }
