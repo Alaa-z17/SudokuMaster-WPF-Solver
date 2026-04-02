@@ -80,8 +80,8 @@
             return SolveBacktrack(board, 0, 0);
         }
 
-        // English: Generates a new Sudoku puzzle based on difficulty
-        // English: difficulty level represents the number of cells to clear
+        //  Generates a new Sudoku puzzle based on difficulty
+        //  difficulty level represents the number of cells to clear
         public int[,] GeneratePuzzle(int difficulty)
         {
             int[,] board = new int[Size, Size];
