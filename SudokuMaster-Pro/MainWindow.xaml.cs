@@ -1,10 +1,11 @@
-﻿using System.Windows;
+﻿using SudokuMaster_Pro.Core;
+using SudokuMaster_Pro.Properties;
+using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media;
-using SudokuMaster_Pro.Core;
 using System.Windows.Media.Animation;
 using System.Windows.Threading;
-using SudokuMaster_Pro.Properties;
 
 namespace SudokuMaster_Pro
 {
@@ -20,7 +21,7 @@ namespace SudokuMaster_Pro
         private DispatcherTimer _timer = new DispatcherTimer();
         private int _secondsElapsed;
         private int _bestScore;
-        private bool _musicEnabled = false;
+        private bool _musicEnabled = true;
 
         // Constructor
         public MainWindow()
@@ -51,12 +52,28 @@ namespace SudokuMaster_Pro
         {
             try
             {
-                bgMusic.Source = new Uri("Assets/background_music.mp3", UriKind.Relative);
-                bgMusic.LoadedBehavior = MediaState.Play;
-                bgMusic.MediaEnded += bgMusic_MediaEnded;
-                _musicEnabled = true;
+                string musicPath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets", "background_music.mp3");
+                if (System.IO.File.Exists(musicPath))
+                {
+                    bgMusic.Source = new Uri(musicPath);
+                    bgMusic.LoadedBehavior = MediaState.Manual;
+                    bgMusic.Volume = 0.5;
+                    bgMusic.Play();
+                    bgMusic.MediaEnded += bgMusic_MediaEnded;
+                    _musicEnabled = true;
+                    musicIcon.Text = "🔊";
+                }
+                else
+                {
+                    _musicEnabled = false;
+                    musicIcon.Text = "🔇";
+                }
             }
-            catch { /* music not available */ }
+            catch
+            {
+                _musicEnabled = false;
+                musicIcon.Text = "🔇";
+            }
         }
 
         // Initialize the timer
@@ -279,8 +296,10 @@ namespace SudokuMaster_Pro
                     cell.IsReadOnly = false;
                     cell.Background = Brushes.White;
                 }
-            // Start a new game on an empty board (optional)
-            StartGame();
+       
+            _timer.Stop();
+            _secondsElapsed = 0;
+            txtTimer.Text = "00:00";
         }
 
         // Generate a new puzzle based on selected difficulty
@@ -412,6 +431,45 @@ namespace SudokuMaster_Pro
             cell.Text = number.ToString();
             cell.Foreground = new SolidColorBrush(Color.FromRgb(155, 89, 182)); // Purple
             ApplyFadeInAnimation(cell);
+        }
+        // Title bar dragging
+        private void TitleBar_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            this.DragMove();
+        }
+
+        // Minimize button
+        private void btnMinimize_Click(object sender, RoutedEventArgs e)
+        {
+            this.WindowState = WindowState.Minimized;
+        }
+
+        // Close button
+        private void btnClose_Click(object sender, RoutedEventArgs e)
+        {
+            this.Close();
+        }
+
+        // Toggle music on/off
+        private void btnMusicToggle_Click(object sender, RoutedEventArgs e)
+        {
+            if (_musicEnabled && bgMusic.Source != null)
+            {
+                if (bgMusic.IsLoaded && bgMusic.Volume > 0)
+                {
+                    bgMusic.Volume = 0;
+                    musicIcon.Text = "🔇";
+                }
+                else
+                {
+                    bgMusic.Volume = 0.5;
+                    musicIcon.Text = "🔊";
+                }
+            }
+            else
+            {
+                MessageBox.Show("Music file not found. Please add background_music.mp3 to the Assets folder.", "Music Unavailable", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
         }
     }
 }
