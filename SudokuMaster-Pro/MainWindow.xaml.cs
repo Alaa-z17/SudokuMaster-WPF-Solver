@@ -9,10 +9,10 @@ namespace SudokuMaster_Pro
 {
     public partial class MainWindow : Window
     {
-        // English: Instance of our fast backtracking engine
+        // Instance of our fast backtracking engine
         private clsSudokuEngine _engine = new clsSudokuEngine();
 
-        // English: 2D Array to keep reference to our 81 TextBoxes
+        //  2D Array to keep reference to our 81 TextBoxes
         private TextBox[,] _cellTextBoxes = new TextBox[9, 9];
 
         public MainWindow()
@@ -21,36 +21,36 @@ namespace SudokuMaster_Pro
             GenerateSudokuGrid();
         }
 
-        // English: Dynamically generates the 9x9 grid in the UI
+        // Dynamically generates the 9x9 grid in the UI
         private void GenerateSudokuGrid()
         {
             MainSudokuGrid.Children.Clear();
 
-            // English: Create the 9 major 3x3 blocks
+            // : Create the 9 major 3x3 blocks
             for (int blockRow = 0; blockRow < 3; blockRow++)
             {
                 for (int blockCol = 0; blockCol < 3; blockCol++)
                 {
-                    // English: We use a Border control to hold the sub-grid and give it thick borders
+                    //  We use a Border control to hold the sub-grid and give it thick borders
                     Border subGridBorder = new Border
                     {
-                        BorderBrush = new SolidColorBrush(Color.FromRgb(44, 60, 80)), // English: Dark bold borders
+                        BorderBrush = new SolidColorBrush(Color.FromRgb(44, 60, 80)), //  Dark bold borders
                         BorderThickness = new Thickness(1.5)
                     };
 
                     Grid subGrid = new Grid();
 
-                    // English: Put the grid inside the border
+                    //  Put the grid inside the border
                     subGridBorder.Child = subGrid;
 
-                    // English: Define 3 rows and 3 columns for each sub-grid
+                    // : Define 3 rows and 3 columns for each sub-grid
                     for (int i = 0; i < 3; i++)
                     {
                         subGrid.RowDefinitions.Add(new RowDefinition());
                         subGrid.ColumnDefinitions.Add(new ColumnDefinition());
                     }
 
-                    // English: Create the actual cells (TextBoxes) inside this 3x3 block
+                    // Create the actual cells (TextBoxes) inside this 3x3 block
                     for (int r = 0; r < 3; r++)
                     {
                         for (int c = 0; c < 3; c++)
@@ -60,12 +60,12 @@ namespace SudokuMaster_Pro
 
                             TextBox cell = new TextBox
                             {
-                                // English: Apply the style we defined in XAML
+                                //  Apply the style we defined in XAML
                                 Style = (Style)this.Resources["SudokuCell"],
-                                Tag = new Tuple<int, int>(actualRow, actualCol) // English: Store row and col indices
+                                Tag = new Tuple<int, int>(actualRow, actualCol) //Store row and col indices
                             };
 
-                            // English: Attach event to validate input as the user types
+                            //  Attach event to validate input as the user types
                             cell.TextChanged += Cell_TextChanged;
 
                             _cellTextBoxes[actualRow, actualCol] = cell;
@@ -76,7 +76,7 @@ namespace SudokuMaster_Pro
                         }
                     }
 
-                    // English: Set the row and column for the BORDER (not the grid) in the main grid
+                    //  Set the row and column for the BORDER (not the grid) in the main grid
                     Grid.SetRow(subGridBorder, blockRow);
                     Grid.SetColumn(subGridBorder, blockCol);
                     MainSudokuGrid.Children.Add(subGridBorder);
@@ -84,7 +84,7 @@ namespace SudokuMaster_Pro
             }
         }
 
-        // English: Restricts input to numbers 1-9 only
+        //  Restricts input to numbers 1-9 only
         private void Cell_TextChanged(object sender, TextChangedEventArgs e)
         {
             if (sender is TextBox textBox)
@@ -95,18 +95,18 @@ namespace SudokuMaster_Pro
                     char c = text[0];
                     if (c < '1' || c > '9')
                     {
-                        textBox.Text = ""; // English: Clear invalid input
+                        textBox.Text = ""; //  Clear invalid input
                     }
                 }
             }
         }
 
-        // English: Event handler for the Solve button
+        //  Event handler for the Solve button
         private void btnSolve_Click(object sender, RoutedEventArgs e)
         {
             int[,] board = new int[9, 9];
 
-            // English: 1. Read values from the UI TextBoxes into the 2D array
+            //  1. Read values from the UI TextBoxes into the 2D array
             for (int r = 0; r < 9; r++)
             {
                 for (int c = 0; c < 9; c++)
@@ -123,21 +123,21 @@ namespace SudokuMaster_Pro
                 }
             }
 
-            // English: 2. Call the engine to solve the board
+            //  2. Call the engine to solve the board
             if (_engine.Solve(board))
             {
-                // English: 3. If solved, display the results back on the UI
+                // : 3. If solved, display the results back on the UI
                 for (int r = 0; r < 9; r++)
                 {
                     for (int c = 0; c < 9; c++)
                     {
-                        // English: Only animate and color the newly solved cells
+                        // Only animate and color the newly solved cells
                         if (string.IsNullOrEmpty(_cellTextBoxes[r, c].Text))
                         {
                             _cellTextBoxes[r, c].Text = board[r, c].ToString();
                             _cellTextBoxes[r, c].Foreground = new SolidColorBrush(Color.FromRgb(52, 152, 219)); // English: Blue color for generated answers
 
-                            // English: Apply smooth fade-in animation
+                            //  Apply smooth fade-in animation
                             ApplyFadeInAnimation(_cellTextBoxes[r, c]);
                         }
                     }
@@ -145,12 +145,12 @@ namespace SudokuMaster_Pro
             }
             else
             {
-                // English: Show error if the puzzle is unsolvable
+                //  Show error if the puzzle is unsolvable
                 MessageBox.Show("This Sudoku puzzle cannot be solved! Please check your input.", "No Solution", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
-        // English: Smoothly fades in the solved numbers
+        //  Smoothly fades in the solved numbers
         private void ApplyFadeInAnimation(TextBox textBox)
         {
             DoubleAnimation fadeIn = new DoubleAnimation
@@ -163,23 +163,54 @@ namespace SudokuMaster_Pro
             textBox.BeginAnimation(TextBox.OpacityProperty, fadeIn);
         }
 
-        // English: Clears all text boxes on the board
+        //  Clears all text boxes on the board
         private void btnClear_Click(object sender, RoutedEventArgs e)
         {
             for (int r = 0; r < 9; r++)
             {
                 for (int c = 0; c < 9; c++)
                 {
-                    _cellTextBoxes[r, c].Text = "";
-                    _cellTextBoxes[r, c].Foreground = Brushes.Black; // English: Reset color
+                    TextBox cell = _cellTextBoxes[r, c];
+                    cell.Text = "";
+                    cell.Foreground = Brushes.Black;
+                    cell.IsReadOnly = false;
+                    cell.Background = Brushes.White;
                 }
             }
         }
 
-        // English: Placeholder for generating new puzzles (can be expanded later)
+
+        //  Generates a new random playable puzzle
         private void btnGenerate_Click(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("Puzzle generation feature will be implemented soon!", "Info", MessageBoxButton.OK, MessageBoxImage.Information);
+            //  Let's set difficulty to 45 missing numbers (Medium difficulty)
+            int difficulty = 45;
+            int[,] newBoard = _engine.GeneratePuzzle(difficulty);
+
+            for (int r = 0; r < 9; r++)
+            {
+                for (int c = 0; c < 9; c++)
+                {
+                    TextBox cell = _cellTextBoxes[r, c];
+                    cell.Text = ""; // Clear previous text
+
+                    if (newBoard[r, c] != 0)
+                    {
+                        cell.Text = newBoard[r, c].ToString();
+                        cell.Foreground = Brushes.Black; // Fixed numbers are black
+                        cell.IsReadOnly = true; // Lock generated numbers
+                        cell.Background = new SolidColorBrush(Color.FromRgb(245, 247, 250)); // Slight gray background for locked cells
+                    }
+                    else
+                    {
+                        cell.Foreground = new SolidColorBrush(Color.FromRgb(52, 152, 219)); // User/Solved numbers will be blue
+                        cell.IsReadOnly = false; // Unlock empty cells for user input
+                        cell.Background = Brushes.White; //  White background for input cells
+                    }
+                }
+            }
+
+            MessageBox.Show("New Puzzle Generated Successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
         }
     }
 }

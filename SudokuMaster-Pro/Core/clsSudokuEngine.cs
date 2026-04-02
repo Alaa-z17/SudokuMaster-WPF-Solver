@@ -4,6 +4,8 @@
     {
         private const int Size = 9;
 
+        private Random _random = new Random();
+
         // Bitmasks to check used numbers in rows, cols, and 3x3 grids in O(1)
         private int[] rowMask = new int[Size];
         private int[] colMask = new int[Size];
@@ -78,6 +80,75 @@
             return SolveBacktrack(board, 0, 0);
         }
 
-   
+        // English: Generates a new Sudoku puzzle based on difficulty
+        // English: difficulty level represents the number of cells to clear
+        public int[,] GeneratePuzzle(int difficulty)
+        {
+            int[,] board = new int[Size, Size];
+
+            // 1. Fill the diagonal 3x3 boxes (independent, no clash possible)
+            FillDiagonal(board);
+
+            // 2. Solve the board to have a complete valid grid
+            Solve(board);
+
+            // 3. Remove digits to create the puzzle
+            RemoveKDigits(board, difficulty);
+
+            return board;
+        }
+
+        private void FillDiagonal(int[,] board)
+        {
+            for (int i = 0; i < Size; i += 3)
+            {
+                FillBox(board, i, i);
+            }
+        }
+
+        private void FillBox(int[,] board, int row, int col)
+        {
+            int num;
+            for (int i = 0; i < 3; i++)
+            {
+                for (int j = 0; j < 3; j++)
+                {
+                    do
+                    {
+                        num = _random.Next(1, 10);
+                    }
+                    while (IsInBox(board, row, col, num));
+
+                    board[row + i, col + j] = num;
+                }
+            }
+        }
+
+        private bool IsInBox(int[,] board, int row, int col, int num)
+        {
+            for (int i = 0; i < 3; i++)
+                for (int j = 0; j < 3; j++)
+                    if (board[row + i, col + j] == num)
+                        return true;
+
+            return false;
+        }
+
+        private void RemoveKDigits(int[,] board, int count)
+        {
+            int removed = 0;
+            while (removed < count)
+            {
+                int cellId = _random.Next(0, 81);
+                int r = cellId / 9;
+                int c = cellId % 9;
+
+                if (board[r, c] != 0)
+                {
+                    board[r, c] = 0;
+                    removed++;
+                }
+            }
+        }
     }
 }
