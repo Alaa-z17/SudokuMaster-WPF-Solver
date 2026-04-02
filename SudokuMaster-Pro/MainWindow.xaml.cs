@@ -2,6 +2,8 @@
 using System.Windows.Controls;
 using System.Windows.Media;
 using SudokuMaster_Pro.Core;
+using System.Windows.Media.Animation;
+
 
 namespace SudokuMaster_Pro
 {
@@ -97,6 +99,87 @@ namespace SudokuMaster_Pro
                     }
                 }
             }
+        }
+
+        // English: Event handler for the Solve button
+        private void btnSolve_Click(object sender, RoutedEventArgs e)
+        {
+            int[,] board = new int[9, 9];
+
+            // English: 1. Read values from the UI TextBoxes into the 2D array
+            for (int r = 0; r < 9; r++)
+            {
+                for (int c = 0; c < 9; c++)
+                {
+                    string text = _cellTextBoxes[r, c].Text;
+                    if (string.IsNullOrEmpty(text))
+                    {
+                        board[r, c] = 0;
+                    }
+                    else
+                    {
+                        board[r, c] = int.Parse(text);
+                    }
+                }
+            }
+
+            // English: 2. Call the engine to solve the board
+            if (_engine.Solve(board))
+            {
+                // English: 3. If solved, display the results back on the UI
+                for (int r = 0; r < 9; r++)
+                {
+                    for (int c = 0; c < 9; c++)
+                    {
+                        // English: Only animate and color the newly solved cells
+                        if (string.IsNullOrEmpty(_cellTextBoxes[r, c].Text))
+                        {
+                            _cellTextBoxes[r, c].Text = board[r, c].ToString();
+                            _cellTextBoxes[r, c].Foreground = new SolidColorBrush(Color.FromRgb(52, 152, 219)); // English: Blue color for generated answers
+
+                            // English: Apply smooth fade-in animation
+                            ApplyFadeInAnimation(_cellTextBoxes[r, c]);
+                        }
+                    }
+                }
+            }
+            else
+            {
+                // English: Show error if the puzzle is unsolvable
+                MessageBox.Show("This Sudoku puzzle cannot be solved! Please check your input.", "No Solution", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        // English: Smoothly fades in the solved numbers
+        private void ApplyFadeInAnimation(TextBox textBox)
+        {
+            DoubleAnimation fadeIn = new DoubleAnimation
+            {
+                From = 0.0,
+                To = 1.0,
+                Duration = new Duration(TimeSpan.FromSeconds(0.6))
+            };
+
+            textBox.BeginAnimation(TextBox.OpacityProperty, fadeIn);
+        }
+
+        // English: Clears all text boxes on the board
+        private void btnClear_Click(object sender, RoutedEventArgs e)
+        {
+            for (int r = 0; r < 9; r++)
+            {
+                for (int c = 0; c < 9; c++)
+                {
+                    _cellTextBoxes[r, c].Text = "";
+                    _cellTextBoxes[r, c].Foreground = Brushes.Black; // English: Reset color
+                }
+            }
+        }
+
+        // English: Placeholder for generating new puzzles (can be expanded later)
+        private void btnGenerate_Click(object sender, RoutedEventArgs e)
+        {
+            MessageBox.Show("Puzzle generation feature will be implemented soon!", "Info", MessageBoxButton.OK, MessageBoxImage.Information);
         }
     }
 }
