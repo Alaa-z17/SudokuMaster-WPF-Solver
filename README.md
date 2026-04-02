@@ -1,6 +1,6 @@
 # 🧩 Sudoku Master Pro
 
-![Sudoku Master Pro Banner](https://via.placeholder.com/800x200?text=Sudoku+Master+Pro) <!-- Replace with your actual banner image -->
+![Sudoku Master Pro Banner](Images/banner.png) <!-- Replace with your actual banner image -->
 
 A fast, elegant, and fully functional **Sudoku game** built with WPF and C#.  
 Solve puzzles, get hints, track your best time, and enjoy relaxing background music.
