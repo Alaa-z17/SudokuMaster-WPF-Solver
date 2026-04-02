@@ -10,7 +10,7 @@
         private int[] rowMask = new int[Size];
         private int[] colMask = new int[Size];
         private int[,] gridMask = new int[3, 3];
-        private void InitializeMasks(int[,] board)
+        private void InitializeMasks(int[,] board, int[] rowMask, int[] colMask, int[,] gridMask)
         {
             for (int r = 0; r < Size; r++)
             {
@@ -28,7 +28,7 @@
             }
         }
 
-        private bool SolveBacktrack(int[,] board, int row, int col)
+        private bool SolveBacktrack(int[,] board, int row, int col, int[] rowMask, int[] colMask, int[,] gridMask)
         {
             // If we reach the end of the row, move to the next row
             if (col == Size)
@@ -42,7 +42,7 @@
 
             // Skip cells that are already filled
             if (board[row, col] != 0)
-                return SolveBacktrack(board, row, col + 1);
+                return SolveBacktrack(board, row, col + 1, rowMask, colMask, gridMask);
 
             for (int num = 1; num <= 9; num++)
             {
@@ -60,7 +60,7 @@
                     gridMask[row / 3, col / 3] |= mask;
 
                     // Recurse to the next cell
-                    if (SolveBacktrack(board, row, col + 1)) return true;
+                    if (SolveBacktrack(board, row, col + 1,rowMask,colMask,gridMask)) return true;
 
                     // Backtrack: remove number and reset masks
                     board[row, col] = 0;
@@ -75,9 +75,11 @@
 
         public bool Solve(int[,] board)
         {
-            // First, initialize masks with the numbers already on the board
-            InitializeMasks(board);
-            return SolveBacktrack(board, 0, 0);
+            int[] rowMask = new int[Size];
+            int[] colMask = new int[Size];
+            int[,] gridMask = new int[3, 3];
+            InitializeMasks(board, rowMask, colMask, gridMask);
+            return SolveBacktrack(board, 0, 0, rowMask, colMask, gridMask);
         }
 
         //  Generates a new Sudoku puzzle based on difficulty

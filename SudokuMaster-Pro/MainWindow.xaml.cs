@@ -3,6 +3,7 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using SudokuMaster_Pro.Core;
 using System.Windows.Media.Animation;
+using System.Windows.Threading; // Required for DispatcherTimer
 
 
 namespace SudokuMaster_Pro
@@ -15,9 +16,50 @@ namespace SudokuMaster_Pro
         //  2D Array to keep reference to our 81 TextBoxes
         private TextBox[,] _cellTextBoxes = new TextBox[9, 9];
 
+        //  Initialize inline to satisfy C# strict null-checks
+        private DispatcherTimer _timer = new DispatcherTimer();
+        private int _secondsElapsed;
+        private int _bestScore = int.MaxValue;
+
+        //  Initialize Timer in Constructor
+        private void InitTimer()
+        {
+            _timer.Interval = TimeSpan.FromSeconds(1);
+            _timer.Tick += Timer_Tick;
+        }
+
+        private void Timer_Tick(object? sender, EventArgs e)
+        {
+            _secondsElapsed++;
+            TimeSpan time = TimeSpan.FromSeconds(_secondsElapsed);
+            txtTimer.Text = time.ToString(@"mm\:ss");
+        }
+
+        //  Call this when a new game starts
+        private void StartGame()
+        {
+            _secondsElapsed = 0;
+            _timer.Start();
+        }
+
+        // English: Call this when the user solves it manually or clicks Solve
+        private void EndGame()
+        {
+            _timer.Stop();
+            if (_secondsElapsed < _bestScore)
+            {
+                _bestScore = _secondsElapsed;
+                TimeSpan time = TimeSpan.FromSeconds(_bestScore);
+                txtBestScore.Text = "Best: " + time.ToString(@"mm\:ss");
+                MessageBox.Show("New Record! 🎉");
+            }
+        }
+
+
         public MainWindow()
         {
             InitializeComponent();
+            InitTimer();           // Added this line
             GenerateSudokuGrid();
         }
 
@@ -211,6 +253,11 @@ namespace SudokuMaster_Pro
             }
 
             MessageBox.Show("New Puzzle Generated Successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+        private void bgMusic_MediaEnded(object sender, RoutedEventArgs e)
+        {
+            bgMusic.Position = TimeSpan.Zero;
+            bgMusic.Play();
         }
     }
 }
