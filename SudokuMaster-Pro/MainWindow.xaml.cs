@@ -4,7 +4,7 @@ using System.Windows.Media;
 using SudokuMaster_Pro.Core;
 using System.Windows.Media.Animation;
 using System.Windows.Threading; // Required for DispatcherTimer
-
+using SudokuMaster_Pro.Properties;
 
 namespace SudokuMaster_Pro
 {
@@ -19,7 +19,8 @@ namespace SudokuMaster_Pro
         //  Initialize inline to satisfy C# strict null-checks
         private DispatcherTimer _timer = new DispatcherTimer();
         private int _secondsElapsed;
-        private int _bestScore = int.MaxValue;
+
+        private int _bestScore;
 
         //  Initialize Timer in Constructor
         private void InitTimer()
@@ -53,12 +54,23 @@ namespace SudokuMaster_Pro
                 txtBestScore.Text = "Best: " + time.ToString(@"mm\:ss");
                 MessageBox.Show("New Record! 🎉");
             }
+            Properties.Settings.Default.BestTimeSeconds = _bestScore;
+            Properties.Settings.Default.Save();
         }
 
 
         public MainWindow()
         {
             InitializeComponent();
+
+            _bestScore = Properties.Settings.Default.BestTimeSeconds;
+            if (_bestScore == 0) _bestScore = int.MaxValue;
+            else
+            {
+                TimeSpan time = TimeSpan.FromSeconds(_bestScore);
+                txtBestScore.Text = "Best: " + time.ToString(@"mm\:ss");
+            }
+
             InitTimer();           // Added this line
             GenerateSudokuGrid();
         }
@@ -143,6 +155,61 @@ namespace SudokuMaster_Pro
             }
         }
 
+
+
+        private bool IsBoardValid(int[,] board)
+        {
+            // التحقق من الصفوف
+            for (int r = 0; r < 9; r++)
+            {
+                bool[] seen = new bool[10];
+                for (int c = 0; c < 9; c++)
+                {
+                    int num = board[r, c];
+                    if (num != 0)
+                    {
+                        if (seen[num]) return false;
+                        seen[num] = true;
+                    }
+                }
+            }
+            // التحقق من الأعمدة
+            for (int c = 0; c < 9; c++)
+            {
+                bool[] seen = new bool[10];
+                for (int r = 0; r < 9; r++)
+                {
+                    int num = board[r, c];
+                    if (num != 0)
+                    {
+                        if (seen[num]) return false;
+                        seen[num] = true;
+                    }
+                }
+            }
+            // التحقق من المربعات 3x3
+            for (int box = 0; box < 9; box++)
+            {
+                int startRow = (box / 3) * 3;
+                int startCol = (box % 3) * 3;
+                bool[] seen = new bool[10];
+                for (int i = 0; i < 3; i++)
+                    for (int j = 0; j < 3; j++)
+                    {
+                        int num = board[startRow + i, startCol + j];
+                        if (num != 0)
+                        {
+                            if (seen[num]) return false;
+                            seen[num] = true;
+                        }
+                    }
+            }
+            return true;
+        }
+
+
+
+
         //  Event handler for the Solve button
         private void btnSolve_Click(object sender, RoutedEventArgs e)
         {
@@ -164,6 +231,14 @@ namespace SudokuMaster_Pro
                     }
                 }
             }
+
+
+            if (!IsBoardValid(board))
+            {
+                MessageBox.Show("The board contains duplicate numbers in a row, column, or box. Please fix them first.", "Invalid Board", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
 
             //  2. Call the engine to solve the board
             if (_engine.Solve(board))
