@@ -300,8 +300,11 @@ namespace SudokuMaster_Pro
         //  Generates a new random playable puzzle
         private void btnGenerate_Click(object sender, RoutedEventArgs e)
         {
-            //  Let's set difficulty to 45 missing numbers (Medium difficulty)
             int difficulty = 45;
+            if (cmbDifficulty.SelectedItem is ComboBoxItem item)
+            {
+                difficulty = Convert.ToInt32(item.Tag);
+            }
             int[,] newBoard = _engine.GeneratePuzzle(difficulty);
 
             for (int r = 0; r < 9; r++)
