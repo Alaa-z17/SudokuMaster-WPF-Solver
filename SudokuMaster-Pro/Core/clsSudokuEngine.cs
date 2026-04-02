@@ -88,10 +88,10 @@
         {
             int[,] fullBoard = new int[Size, Size];
             FillDiagonal(fullBoard);
-            Solve(fullBoard);  // الآن fullBoard مكتمل
+            Solve(fullBoard);  // Now fullBoard is complete
             int[,] puzzle = (int[,])fullBoard.Clone();
             RemoveKDigits(puzzle, difficulty);
-            // إذا تعددت الحلول، نعيد المحاولة (بسيطة لكنها فعالة)
+            // If multiple solutions, retry (simple but effective)
             int attempts = 0;
             while (CountSolutions(puzzle) != 1 && attempts < 10)
             {
