@@ -9,10 +9,9 @@ Solve puzzles, get hints, track your best time, and enjoy relaxing background mu
 
 ## 🎥 Watch the Trailer / Gameplay
 
-[![Watch the video](https://img.youtube.com/vi/YOUR_VIDEO_ID/maxresdefault.jpg)](https://www.youtube.com/watch?v=YOUR_VIDEO_ID)
+[![Watch the video](https://img.youtube.com/vi/PwYzp8NPJsU/maxresdefault.jpg)](https://www.youtube.com/watch?v=PwYzp8NPJsU)
 
 > *Click the image above to watch the gameplay demo on YouTube.*  
-> *(Replace `YOUR_VIDEO_ID` with your actual YouTube video ID.)*
 
 ---
 
@@ -38,7 +37,7 @@ Solve puzzles, get hints, track your best time, and enjoy relaxing background mu
 ## 🖥️ System Requirements
 
 - **OS**: Windows 10 or later (64-bit)
-- **Runtime**: [.NET Desktop Runtime 8.0](https://dotnet.microsoft.com/en-us/download/dotnet/8.0) (if using Framework-dependent version)  
+- **Runtime**: [.NET Desktop Runtime 10](https://dotnet.microsoft.com/en-us/download/dotnet/8.0) (if using Framework-dependent version)  
   *Or use the self-contained version (no runtime needed)*
 
 ---
@@ -48,7 +47,7 @@ Solve puzzles, get hints, track your best time, and enjoy relaxing background mu
 | Version | Format | Size | Requirements |
 |---------|--------|------|---------------|
 | **Self-contained (x64)** | ZIP | ~80 MB | No additional runtime needed |
-| **Framework-dependent** | ZIP | ~1 MB | .NET 8.0 Runtime required |
+| **Framework-dependent** | ZIP | ~1 MB | .NET 10 Runtime required |
 
 👉 **Recommended**: Download the self-contained ZIP for easiest setup.
 
@@ -81,7 +80,7 @@ Solve puzzles, get hints, track your best time, and enjoy relaxing background mu
 ## 🛠️ Built With
 
 - **C#** – Core logic
-- **WPF (.NET 8.0)** – UI framework
+- **WPF (.NET 10)** – UI framework
 - **Bitmasking** – O(1) validation
 - **Backtracking** – Unique solution guarantee
 
